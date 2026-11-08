@@ -1,0 +1,39 @@
+# ============================================================
+#  Biblioteca SENATI · archivos ignorados por Git
+# ============================================================
+
+# Maven
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+release.properties
+dependency-reduced-pom.xml
+
+# Herramientas locales (Tomcat descargado por scripts/dev.sh)
+.tools/
+tomcat/
+apache-tomcat-*/
+
+# Entorno de desarrollo
+.idea/
+*.iml
+.vscode/settings.json
+.classpath
+.project
+.settings/
+.factorypath
+*.log
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+
+# Artefactos temporales de revisión
+.taste-skill/
+reporte/
+screenshots/
+
+# Base de datos local
+*.sqlite
+*.db

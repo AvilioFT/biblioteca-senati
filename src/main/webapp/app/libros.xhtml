@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:ui="jakarta.faces.facelets">
+<ui:composition template="/templates/layout.xhtml">
+    <ui:define name="title">Libros</ui:define>
+    <ui:define name="crumb">Libros</ui:define>
+
+    <ui:define name="content">
+        <div class="page-head">
+            <div>
+                <h1>Catálogo de libros</h1>
+                <p class="page-sub">Consulta el fondo bibliográfico y mantén actualizado el stock de ejemplares.</p>
+            </div>
+            <div class="page-actions">
+                <a class="btn btn-primary" href="#{request.contextPath}/app/libro-form.xhtml">Registrar libro</a>
+            </div>
+        </div>
+
+        <section class="panel">
+            <div class="panel-head">
+                <h2 class="panel-title">Títulos registrados</h2>
+                <h:form styleClass="search-form">
+                    <h:inputText value="#{libroBean.filtro}" styleClass="input"
+                                 placeholder="Buscar por título, autor o ISBN" aria-label="Buscar libros"/>
+                    <h:commandButton value="Buscar" action="#{libroBean.buscar}" styleClass="btn btn-secondary btn-sm"/>
+                    <h:commandButton value="Limpiar" action="#{libroBean.limpiar}" styleClass="btn btn-quiet btn-sm"/>
+                </h:form>
+            </div>
+
+            <div class="panel-body tight">
+                <h:panelGroup rendered="#{empty libroBean.libros}">
+                    <div class="panel-body">
+                        <div class="empty">
+                            <span class="empty-title">No hay libros que coincidan</span>
+                            Prueba con otro término o registra un nuevo título.
+                        </div>
+                    </div>
+                </h:panelGroup>
+
+                <h:form rendered="#{not empty libroBean.libros}">
+                    <div class="table-wrap">
+                        <table class="data">
+                            <thead>
+                            <tr>
+                                <th>Título</th>
+                                <th class="hide-sm">ISBN</th>
+                                <th class="num">Ejemplares</th>
+                                <th>Disponibilidad</th>
+                                <th class="actions-cell"><span class="sr-only">Acciones</span></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <ui:repeat value="#{libroBean.libros}" var="l">
+                                <tr>
+                                    <td>
+                                        <span class="cell-main">#{l.titulo}</span>
+                                        <span class="cell-sub">#{l.autor}</span>
+                                    </td>
+                                    <td class="hide-sm nowrap">#{l.isbn}</td>
+                                    <td class="num">#{l.cantidadEjemplares}</td>
+                                    <td>
+                                        <span class="pill #{l.cantidadEjemplares > 0 ? 'pill-active' : 'pill-overdue'}">
+                                            #{l.cantidadEjemplares > 0 ? 'Disponible' : 'Sin stock'}
+                                        </span>
+                                    </td>
+                                    <td class="actions-cell">
+                                        <div class="row-actions">
+                                            <a class="btn btn-sm btn-quiet"
+                                               href="#{request.contextPath}/app/libro-form.xhtml?id=#{l.id}">Editar</a>
+                                            <h:commandButton value="Eliminar" styleClass="btn btn-sm btn-danger"
+                                                             action="#{libroBean.eliminar(l.id)}"
+                                                             onclick="return confirm('¿Eliminar este libro del catálogo?');"/>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </ui:repeat>
+                            </tbody>
+                        </table>
+                    </div>
+                </h:form>
+            </div>
+        </section>
+    </ui:define>
+</ui:composition>
+</html>

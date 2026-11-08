@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:ui="jakarta.faces.facelets">
+<ui:composition template="/templates/layout.xhtml">
+    <ui:define name="title">#{empty usuarioBean.usuario.id ? 'Registrar usuario' : 'Editar usuario'}</ui:define>
+    <ui:define name="crumb">Usuarios / #{empty usuarioBean.usuario.id ? 'Nuevo' : 'Editar'}</ui:define>
+
+    <ui:define name="content">
+        <div class="page-head">
+            <div>
+                <h1>#{empty usuarioBean.usuario.id ? 'Registrar usuario' : 'Editar usuario'}</h1>
+                <p class="page-sub">El código UTU debe coincidir con el identificador del estudiante en LDAP.</p>
+            </div>
+            <div class="page-actions">
+                <a class="btn btn-secondary" href="#{request.contextPath}/app/usuarios.xhtml">Volver al padrón</a>
+            </div>
+        </div>
+
+        <div class="grid-2">
+            <section class="panel">
+                <div class="panel-head">
+                    <h2 class="panel-title">Datos del usuario</h2>
+                </div>
+                <div class="panel-body">
+                    <h:form id="usuarioForm">
+                        <div class="form-grid">
+                            <div class="field">
+                                <label for="codigo">Código UTU</label>
+                                <h:inputText id="codigo" value="#{usuarioBean.usuario.codigoUtu}" required="true"
+                                             requiredMessage="El código UTU es obligatorio." maxlength="20"
+                                             autocomplete="off"/>
+                                <span class="hint">Ejemplo: U2026001.</span>
+                                <h:message for="codigo" styleClass="field-error"/>
+                            </div>
+
+                            <div class="field">
+                                <label for="correo">Correo institucional</label>
+                                <h:inputText id="correo" value="#{usuarioBean.usuario.correo}" required="true"
+                                             requiredMessage="El correo es obligatorio." maxlength="100"
+                                             autocomplete="off"/>
+                                <h:message for="correo" styleClass="field-error"/>
+                            </div>
+
+                            <div class="field field-full">
+                                <label for="nombre">Nombre completo</label>
+                                <h:inputText id="nombre" value="#{usuarioBean.usuario.nombre}" required="true"
+                                             requiredMessage="El nombre es obligatorio." maxlength="100"/>
+                                <h:message for="nombre" styleClass="field-error"/>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <h:commandButton value="Guardar usuario" action="#{usuarioBean.guardar}"
+                                             styleClass="btn btn-primary"/>
+                            <a class="btn btn-secondary" href="#{request.contextPath}/app/usuarios.xhtml">Cancelar</a>
+                        </div>
+                    </h:form>
+                </div>
+            </section>
+
+            <aside class="panel">
+                <div class="panel-head">
+                    <h2 class="panel-title">Autenticación centralizada</h2>
+                </div>
+                <div class="panel-body">
+                    <p style="margin-top:0; font-size:13px; color:var(--muted);">
+                        La biblioteca valida al estudiante contra el directorio institucional antes de registrar
+                        un préstamo. Si el código UTU no existe o está inactivo, la operación se rechaza.
+                    </p>
+                    <dl class="meta-list">
+                        <dt>Servidor</dt><dd>LDAP institucional</dd>
+                        <dt>Protocolo</dt><dd>JNDI / LDAP</dd>
+                        <dt>Modo demo</dt><dd>Directorio embebido</dd>
+                        <dt>Usuarios demo</dt><dd>U2026001 · U2026002</dd>
+                        <dt>Usuario inactivo</dt><dd>U2026003</dd>
+                    </dl>
+                </div>
+            </aside>
+        </div>
+    </ui:define>
+</ui:composition>
+</html>

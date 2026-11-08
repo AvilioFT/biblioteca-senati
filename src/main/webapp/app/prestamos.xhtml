@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:ui="jakarta.faces.facelets">
+<ui:composition template="/templates/layout.xhtml">
+    <ui:define name="title">Préstamos</ui:define>
+    <ui:define name="crumb">Préstamos</ui:define>
+
+    <ui:define name="content">
+        <div class="page-head">
+            <div>
+                <h1>Préstamos y devoluciones</h1>
+                <p class="page-sub">#{prestamoBean.activos} préstamos activos · #{prestamoBean.enMora} vencidos sin devolver.</p>
+            </div>
+            <div class="page-actions">
+                <a class="btn btn-primary" href="#{request.contextPath}/app/prestamo-form.xhtml">Nuevo préstamo</a>
+            </div>
+        </div>
+
+        <h:panelGroup rendered="#{not empty prestamoBean.mensaje}">
+            <div class="notice #{prestamoBean.mensaje.error ? 'notice-warn' : 'notice-info'}" style="margin-bottom:16px;">
+                <span>#{prestamoBean.mensaje.texto}</span>
+            </div>
+        </h:panelGroup>
+
+        <section class="panel">
+            <div class="panel-head">
+                <h2 class="panel-title">Historial de préstamos</h2>
+                <span class="panel-note">#{prestamoBean.prestamos.size()} registros</span>
+            </div>
+
+            <div class="panel-body tight">
+                <h:panelGroup rendered="#{empty prestamoBean.prestamos}">
+                    <div class="panel-body">
+                        <div class="empty">
+                            <span class="empty-title">Todavía no hay préstamos registrados</span>
+                            Usa “Nuevo préstamo” para iniciar el ciclo de un ejemplar.
+                        </div>
+                    </div>
+                </h:panelGroup>
+
+                <h:form rendered="#{not empty prestamoBean.prestamos}">
+                    <div class="table-wrap">
+                        <table class="data">
+                            <thead>
+                            <tr>
+                                <th>Libro</th>
+                                <th class="hide-sm">Estudiante</th>
+                                <th class="nowrap">Prestado</th>
+                                <th class="nowrap">Vence</th>
+                                <th>Estado</th>
+                                <th class="actions-cell"><span class="sr-only">Acciones</span></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <ui:repeat value="#{prestamoBean.prestamos}" var="p">
+                                <tr>
+                                    <td>
+                                        <span class="cell-main">#{p.libro.titulo}</span>
+                                        <span class="cell-sub">#{p.libro.autor}</span>
+                                    </td>
+                                    <td class="hide-sm">
+                                        <span class="cell-main">#{p.usuario.nombre}</span>
+                                        <span class="cell-sub">#{p.usuario.codigoUtu}</span>
+                                    </td>
+                                    <td class="nowrap">
+                                        <h:outputText value="#{p.fechaPrestamo}">
+                                            <f:convertDateTime type="localDate" pattern="dd/MM/yyyy"/>
+                                        </h:outputText>
+                                    </td>
+                                    <td class="nowrap">
+                                        <h:outputText value="#{p.fechaDevolucionEstimada}">
+                                            <f:convertDateTime type="localDate" pattern="dd/MM/yyyy"/>
+                                        </h:outputText>
+                                    </td>
+                                    <td>
+                                        <span class="pill #{p.estado eq 'ACTIVO' ? (p.vencido ? 'pill-overdue' : 'pill-active') : 'pill-returned'}">
+                                            #{p.estado eq 'ACTIVO' ? (p.vencido ? 'Vencido' : 'Activo') : 'Devuelto'}
+                                        </span>
+                                    </td>
+                                    <td class="actions-cell">
+                                        <div class="row-actions">
+                                            <h:commandButton value="Devolver" styleClass="btn btn-sm btn-secondary"
+                                                             rendered="#{p.estado eq 'ACTIVO'}"
+                                                             action="#{prestamoBean.devolver(p.id)}"
+                                                             onclick="return confirm('¿Registrar la devolución de este ejemplar?');"/>
+                                            <h:outputText value="—" rendered="#{p.estado ne 'ACTIVO'}" styleClass="panel-note"/>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </ui:repeat>
+                            </tbody>
+                        </table>
+                    </div>
+                </h:form>
+            </div>
+        </section>
+    </ui:define>
+</ui:composition>
+</html>

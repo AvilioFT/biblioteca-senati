@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:ui="jakarta.faces.facelets">
+<ui:composition template="/templates/layout.xhtml">
+    <ui:define name="title">#{empty libroBean.libro.id ? 'Registrar libro' : 'Editar libro'}</ui:define>
+    <ui:define name="crumb">Libros / #{empty libroBean.libro.id ? 'Nuevo' : 'Editar'}</ui:define>
+
+    <ui:define name="content">
+        <div class="page-head">
+            <div>
+                <h1>#{empty libroBean.libro.id ? 'Registrar libro' : 'Editar libro'}</h1>
+                <p class="page-sub">El ISBN se valida con el dígito verificador antes de guardar el registro.</p>
+            </div>
+            <div class="page-actions">
+                <a class="btn btn-secondary" href="#{request.contextPath}/app/libros.xhtml">Volver al catálogo</a>
+            </div>
+        </div>
+
+        <div class="grid-2">
+            <section class="panel">
+                <div class="panel-head">
+                    <h2 class="panel-title">Datos del libro</h2>
+                </div>
+                <div class="panel-body">
+                    <h:form id="libroForm">
+                        <div class="form-grid">
+                            <div class="field">
+                                <label for="isbn">ISBN</label>
+                                <h:inputText id="isbn" value="#{libroBean.libro.isbn}" required="true"
+                                             requiredMessage="El ISBN es obligatorio."
+                                             maxlength="20" autocomplete="off">
+                                    <f:validator validatorId="isbnValidator"/>
+                                </h:inputText>
+                                <span class="hint">ISBN-10 o ISBN-13, con o sin guiones.</span>
+                                <h:message for="isbn" styleClass="field-error"/>
+                            </div>
+
+                            <div class="field">
+                                <label for="cantidad">Ejemplares disponibles</label>
+                                <h:inputText id="cantidad" value="#{libroBean.libro.cantidadEjemplares}"
+                                             required="true" requiredMessage="Indica la cantidad de ejemplares."
+                                             maxlength="5">
+                                    <f:convertNumber integerOnly="true"/>
+                                </h:inputText>
+                                <span class="hint">Stock actual para préstamo.</span>
+                                <h:message for="cantidad" styleClass="field-error"/>
+                            </div>
+
+                            <div class="field field-full">
+                                <label for="titulo">Título</label>
+                                <h:inputText id="titulo" value="#{libroBean.libro.titulo}" required="true"
+                                             requiredMessage="El título es obligatorio." maxlength="150"/>
+                                <h:message for="titulo" styleClass="field-error"/>
+                            </div>
+
+                            <div class="field field-full">
+                                <label for="autor">Autor</label>
+                                <h:inputText id="autor" value="#{libroBean.libro.autor}" required="true"
+                                             requiredMessage="El autor es obligatorio." maxlength="100"/>
+                                <h:message for="autor" styleClass="field-error"/>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <h:commandButton value="Guardar libro" action="#{libroBean.guardar}"
+                                             styleClass="btn btn-primary"/>
+                            <a class="btn btn-secondary" href="#{request.contextPath}/app/libros.xhtml">Cancelar</a>
+                        </div>
+                    </h:form>
+                </div>
+            </section>
+
+            <aside class="panel">
+                <div class="panel-head">
+                    <h2 class="panel-title">Validaciones del formulario</h2>
+                </div>
+                <div class="panel-body">
+                    <ul class="rule-list">
+                        <li><span>ISBN obligatorio</span><span class="pill pill-neutral">Requerido</span></li>
+                        <li><span>Dígito verificador ISBN-10 / ISBN-13</span><span class="pill pill-active">Validador propio</span></li>
+                        <li><span>ISBN único en el catálogo</span><span class="pill pill-active">Regla de negocio</span></li>
+                        <li><span>Stock mayor o igual a cero</span><span class="pill pill-active">Regla de negocio</span></li>
+                    </ul>
+                    <div class="notice notice-info" style="margin-top:16px;">
+                        <span>Si el libro tiene préstamos registrados, no podrá eliminarse hasta que sean devueltos.</span>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </ui:define>
+</ui:composition>
+</html>

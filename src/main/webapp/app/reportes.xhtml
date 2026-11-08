@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:ui="jakarta.faces.facelets">
+<ui:composition template="/templates/layout.xhtml">
+    <ui:define name="title">Reportes</ui:define>
+    <ui:define name="crumb">Reportes</ui:define>
+
+    <ui:define name="content">
+        <div class="page-head">
+            <div>
+                <h1>Reporte de la biblioteca</h1>
+                <p class="page-sub">Corte al #{reporteBean.fechaHoy} · consultas JPQL y descarga en PDF.</p>
+            </div>
+        </div>
+
+        <div class="kpi-strip three">
+            <div class="kpi">
+                <span class="kpi-label">Préstamos activos</span>
+                <span class="kpi-value">#{reporteBean.totalPrestamosActivos}</span>
+                <span class="kpi-note">sin devolver al día de hoy</span>
+            </div>
+            <div class="kpi">
+                <span class="kpi-label">Usuarios en mora</span>
+                <span class="kpi-value #{reporteBean.totalMora > 0 ? 'is-bad' : ''}">#{reporteBean.totalMora}</span>
+                <span class="kpi-note">con devolución vencida</span>
+            </div>
+            <div class="kpi">
+                <span class="kpi-label">Reportes disponibles</span>
+                <span class="kpi-value">2</span>
+                <span class="kpi-note">libros y morosidad</span>
+            </div>
+        </div>
+
+        <div class="report-grid" style="margin-bottom:16px;">
+            <section class="panel report-card">
+                <div class="panel-body">
+                    <p class="report-kicker">JPQL · últimos 30 días</p>
+                    <h2 class="report-title">Libros más prestados</h2>
+                    <p class="report-copy">Ranking de títulos por cantidad de préstamos registrados en el período.</p>
+                    <div class="report-actions">
+                        <a class="btn btn-primary" target="_blank" rel="noopener"
+                           href="#{request.contextPath}/reportes/libros.pdf">Descargar PDF</a>
+                    </div>
+                </div>
+            </section>
+
+            <section class="panel report-card">
+                <div class="panel-body">
+                    <p class="report-kicker">JPQL · vencidos al día</p>
+                    <h2 class="report-title">Usuarios con mora</h2>
+                    <p class="report-copy">Préstamos activos cuya fecha de devolución ya pasó, con los días de atraso.</p>
+                    <div class="report-actions">
+                        <a class="btn btn-secondary" target="_blank" rel="noopener"
+                           href="#{request.contextPath}/reportes/mora.pdf">Descargar PDF</a>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <div class="grid-2 equal">
+            <section class="panel">
+                <div class="panel-head">
+                    <h2 class="panel-title">Vista previa · libros más prestados</h2>
+                </div>
+                <div class="panel-body tight">
+                    <h:panelGroup rendered="#{empty reporteBean.topLibros}">
+                        <div class="panel-body">
+                            <div class="empty">
+                                <span class="empty-title">Sin préstamos en los últimos 30 días</span>
+                                El reporte se generará con datos cuando existan préstamos.
+                            </div>
+                        </div>
+                    </h:panelGroup>
+
+                    <div class="table-wrap" rendered="#{not empty reporteBean.topLibros}">
+                        <table class="data">
+                            <thead>
+                            <tr>
+                                <th>Título</th>
+                                <th class="num">Préstamos</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <ui:repeat value="#{reporteBean.topLibros}" var="t">
+                                <tr>
+                                    <td class="cell-main">#{t.titulo}</td>
+                                    <td class="num">#{t.total}</td>
+                                </tr>
+                            </ui:repeat>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section class="panel">
+                <div class="panel-head">
+                    <h2 class="panel-title">Vista previa · usuarios con mora</h2>
+                </div>
+                <div class="panel-body tight">
+                    <h:panelGroup rendered="#{empty reporteBean.morosos}">
+                        <div class="panel-body">
+                            <div class="empty">
+                                <span class="empty-title">Sin devoluciones vencidas</span>
+                                No hay préstamos activos fuera de plazo.
+                            </div>
+                        </div>
+                    </h:panelGroup>
+
+                    <div class="table-wrap" rendered="#{not empty reporteBean.morosos}">
+                        <table class="data">
+                            <thead>
+                            <tr>
+                                <th>Estudiante</th>
+                                <th class="hide-sm">Libro</th>
+                                <th class="nowrap">Vence</th>
+                                <th class="num">Días</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <ui:repeat value="#{reporteBean.morosos}" var="m">
+                                <tr>
+                                    <td>
+                                        <span class="cell-main">#{m.estudiante}</span>
+                                        <span class="cell-sub">#{m.codigo}</span>
+                                    </td>
+                                    <td class="hide-sm">#{m.libro}</td>
+                                    <td class="nowrap">#{m.vence}</td>
+                                    <td class="num">#{m.dias}</td>
+                                </tr>
+                            </ui:repeat>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </ui:define>
+</ui:composition>
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core">
+<h:head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Ingreso · Biblioteca SENATI</title>
+    <h:outputStylesheet library="css" name="app.css"/>
+</h:head>
+<h:body styleClass="login-body">
+    <div class="login-shell">
+
+        <section class="login-story">
+            <div class="login-brand">
+                <span class="brand-mark">B</span>
+                <span>
+                    <span class="login-brand-name">Biblioteca SENATI</span>
+                    <span class="login-brand-sub">SEDE LIMA · SERVICIOS ACADÉMICOS</span>
+                </span>
+            </div>
+
+            <div>
+                <h1>El catálogo de tu campus, en orden.</h1>
+                <p>Consulta la colección, registra préstamos y devoluciones, controla la mora y descarga los
+                   reportes de la biblioteca desde un solo lugar.</p>
+            </div>
+
+            <div class="login-story-foot">
+                Sistema de Gestión de Biblioteca Universitaria · JSF · JPA/Hibernate · CDI
+            </div>
+        </section>
+
+        <section class="login-side">
+            <div class="login-card">
+                <h2>Ingresa a tu cuenta</h2>
+                <p class="login-sub">Usa tus credenciales institucionales para continuar.</p>
+
+                <h:messages globalOnly="true" styleClass="messages" errorClass="messages-error"
+                            infoClass="messages-info" warnClass="messages-warn"/>
+
+                <h:form id="loginForm">
+                    <div class="field">
+                        <label for="usuario">Usuario o código UTU</label>
+                        <h:inputText id="usuario" value="#{loginBean.usuario}" required="true"
+                                     requiredMessage="Ingresa tu usuario o código UTU."
+                                     autocomplete="username" maxlength="40"/>
+                        <h:message for="usuario" styleClass="field-error"/>
+                    </div>
+
+                    <div class="field">
+                        <label for="clave">Contraseña</label>
+                        <h:inputSecret id="clave" value="#{loginBean.clave}" required="true"
+                                       requiredMessage="Ingresa tu contraseña."
+                                       autocomplete="current-password" maxlength="80"/>
+                        <h:message for="clave" styleClass="field-error"/>
+                    </div>
+
+                    <h:commandButton value="Ingresar" action="#{loginBean.login}" styleClass="btn btn-primary"/>
+
+                    <h:outputText value="#{loginBean.error}" rendered="#{not empty loginBean.error}"
+                                  styleClass="notice notice-warn" style="margin-top:16px; display:flex;"/>
+                </h:form>
+
+                <div class="demo-box">
+                    <p class="demo-title">Accesos de demostración</p>
+                    <div class="demo-row"><span>Bibliotecario</span><code>admin / admin123</code><!--  --></div>
+                    <div class="demo-row"><span>Estudiante activo</span><code>U2026001 / 123456</code></div>
+                    <div class="demo-row"><span>Estudiante inactivo</span><code>U2026003 / 123456</code></div>
+                </div>
+            </div>
+        </section>
+    </div>
+</h:body>
+</html>

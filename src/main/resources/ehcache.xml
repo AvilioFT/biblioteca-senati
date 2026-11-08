@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns="http://www.ehcache.org/v3"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.ehcache.org/v3 http://www.ehcache.org/schema/ehcache-core-3.10.xsd">
+
+    <!-- Caché por defecto para entidades/regiones sin configuración específica -->
+    <cache-template name="defaultEntity">
+        <expiry>
+            <ttl unit="minutes">10</ttl>
+        </expiry>
+        <heap unit="entries">1000</heap>
+    </cache-template>
+
+    <cache alias="default-query-results-region" uses-template="defaultEntity"/>
+    <cache alias="default-update-timestamps-region">
+        <expiry><none/></expiry>
+        <heap unit="entries">5000</heap>
+    </cache>
+
+    <cache alias="com.senati.biblioteca.model.Libro" uses-template="defaultEntity"/>
+    <cache alias="com.senati.biblioteca.model.Usuario" uses-template="defaultEntity"/>
+</config>

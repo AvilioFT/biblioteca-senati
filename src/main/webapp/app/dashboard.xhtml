@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:f="jakarta.faces.core">
+<ui:composition template="/templates/layout.xhtml">
+    <ui:define name="title">Panel</ui:define>
+    <ui:define name="crumb">Panel</ui:define>
+
+    <ui:define name="content">
+        <div class="page-head">
+            <div>
+                <h1>Panel de la biblioteca</h1>
+                <p class="page-sub">Estado de la colección, los préstamos y la mora en este momento.</p>
+            </div>
+            <div class="page-actions">
+                <a class="btn btn-secondary" href="#{request.contextPath}/app/libro-form.xhtml">Registrar libro</a>
+                <a class="btn btn-primary" href="#{request.contextPath}/app/prestamo-form.xhtml">Nuevo préstamo</a>
+            </div>
+        </div>
+
+        <div class="kpi-strip">
+            <div class="kpi">
+                <span class="kpi-label">Libros en catálogo</span>
+                <span class="kpi-value">#{dashboardBean.totalLibros}</span>
+                <span class="kpi-note">títulos registrados</span>
+            </div>
+            <div class="kpi">
+                <span class="kpi-label">Usuarios registrados</span>
+                <span class="kpi-value">#{dashboardBean.totalUsuarios}</span>
+                <span class="kpi-note">estudiantes y personal</span>
+            </div>
+            <div class="kpi">
+                <span class="kpi-label">Préstamos activos</span>
+                <span class="kpi-value">#{dashboardBean.prestamosActivos}</span>
+                <span class="kpi-note">sin devolver</span>
+            </div>
+            <div class="kpi">
+                <span class="kpi-label">Préstamos en mora</span>
+                <span class="kpi-value #{dashboardBean.prestamosEnMora > 0 ? 'is-bad' : ''}">#{dashboardBean.prestamosEnMora}</span>
+                <span class="kpi-note">vencidos sin devolver</span>
+            </div>
+        </div>
+
+        <div class="grid-2">
+            <section class="panel">
+                <div class="panel-head">
+                    <h2 class="panel-title">Últimos préstamos</h2>
+                    <a class="panel-note" href="#{request.contextPath}/app/prestamos.xhtml">Ver todos</a>
+                </div>
+                <div class="panel-body tight">
+                    <h:panelGroup rendered="#{empty dashboardBean.ultimosPrestamos}">
+                        <div class="panel-body">
+                            <div class="empty">
+                                <span class="empty-title">Todavía no hay préstamos</span>
+                                Registra el primero desde “Nuevo préstamo”.
+                            </div>
+                        </div>
+                    </h:panelGroup>
+
+                    <div class="table-wrap" rendered="#{not empty dashboardBean.ultimosPrestamos}">
+                        <table class="data">
+                            <thead>
+                            <tr>
+                                <th>Libro</th>
+                                <th class="hide-sm">Estudiante</th>
+                                <th class="nowrap">Préstamo</th>
+                                <th class="nowrap">Vence</th>
+                                <th>Estado</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                <ui:repeat value="#{dashboardBean.ultimosPrestamos}" var="p">
+                                    <tr>
+                                        <td>
+                                            <span class="cell-main">#{p.libro.titulo}</span>
+                                            <span class="cell-sub">#{p.libro.autor}</span>
+                                        </td>
+                                        <td class="hide-sm">
+                                            <span class="cell-main">#{p.usuario.nombre}</span>
+                                            <span class="cell-sub">#{p.usuario.codigoUtu}</span>
+                                        </td>
+                                        <td class="nowrap">
+                                            <h:outputText value="#{p.fechaPrestamo}">
+                                                <f:convertDateTime type="localDate" pattern="dd/MM/yyyy"/>
+                                            </h:outputText>
+                                        </td>
+                                        <td class="nowrap">
+                                            <h:outputText value="#{p.fechaDevolucionEstimada}">
+                                                <f:convertDateTime type="localDate" pattern="dd/MM/yyyy"/>
+                                            </h:outputText>
+                                        </td>
+                                        <td>
+                                            <span class="pill #{p.estado eq 'ACTIVO' ? (p.vencido ? 'pill-overdue' : 'pill-active') : 'pill-returned'}">
+                                                #{p.estado eq 'ACTIVO' ? (p.vencido ? 'Vencido' : 'Activo') : 'Devuelto'}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </ui:repeat>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section class="panel">
+                <div class="panel-head">
+                    <h2 class="panel-title">Requieren devolución</h2>
+                    <span class="panel-note">Mora</span>
+                </div>
+                <div class="panel-body">
+                    <h:panelGroup rendered="#{empty reporteBean.morososTop}">
+                        <div class="empty">
+                            <span class="empty-title">Sin préstamos vencidos</span>
+                            Ningún estudiante tiene devoluciones pendientes fuera de plazo.
+                        </div>
+                    </h:panelGroup>
+
+                    <ul class="rule-list" rendered="#{not empty reporteBean.morososTop}">
+                        <ui:repeat value="#{reporteBean.morososTop}" var="m">
+                            <li>
+                                <span>
+                                    <span class="cell-main">#{m.estudiante}</span>
+                                    <span class="cell-sub">#{m.codigo} · #{m.libro}</span>
+                                </span>
+                                <span class="pill pill-overdue">#{m.dias} días</span>
+                            </li>
+                        </ui:repeat>
+                    </ul>
+
+                    <div style="margin-top:16px;">
+                        <a class="btn btn-secondary btn-sm" href="#{request.contextPath}/app/reportes.xhtml">Ver reporte de mora</a>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </ui:define>
+</ui:composition>
+</html>

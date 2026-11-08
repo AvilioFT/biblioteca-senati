@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:ui="jakarta.faces.facelets">
+<ui:composition template="/templates/layout.xhtml">
+    <ui:define name="title">Nuevo préstamo</ui:define>
+    <ui:define name="crumb">Préstamos / Nuevo</ui:define>
+
+    <ui:define name="content">
+        <div class="page-head">
+            <div>
+                <h1>Registrar préstamo</h1>
+                <p class="page-sub">El sistema valida al estudiante en LDAP, el límite de tres préstamos y el stock disponible.</p>
+            </div>
+            <div class="page-actions">
+                <a class="btn btn-secondary" href="#{request.contextPath}/app/prestamos.xhtml">Ver préstamos</a>
+            </div>
+        </div>
+
+        <h:panelGroup rendered="#{not empty prestamoBean.mensaje}">
+            <div class="notice #{prestamoBean.mensaje.error ? 'notice-warn' : 'notice-info'}" style="margin-bottom:16px;">
+                <span>#{prestamoBean.mensaje.texto}</span>
+            </div>
+        </h:panelGroup>
+
+        <div class="grid-2">
+            <section class="panel">
+                <div class="panel-head">
+                    <h2 class="panel-title">Datos del préstamo</h2>
+                </div>
+                <div class="panel-body">
+                    <h:form id="prestamoForm">
+                        <div class="form-grid">
+                            <div class="field field-full">
+                                <label for="codigo">Código UTU del estudiante</label>
+                                <h:inputText id="codigo" value="#{prestamoBean.codigoUtu}" required="true"
+                                             requiredMessage="Ingresa el código UTU del estudiante."
+                                             maxlength="20" autocomplete="off">
+                                    <f:validator validatorId="limitePrestamosValidator"/>
+                                </h:inputText>
+                                <span class="hint">Debe existir y estar activo en el directorio LDAP. Demo: U2026001.</span>
+                                <h:message for="codigo" styleClass="field-error"/>
+                            </div>
+
+                            <div class="field field-full">
+                                <label for="libro">Libro</label>
+                                <h:selectOneMenu id="libro" value="#{prestamoBean.libroId}" required="true"
+                                                 requiredMessage="Selecciona un libro.">
+                                    <f:selectItem itemValue="#{null}" itemLabel="— Selecciona un libro disponible —"/>
+                                    <f:selectItems value="#{prestamoBean.librosDisponibles}" var="l"
+                                                   itemValue="#{l.id}"
+                                                   itemLabel="#{l.titulo} — #{l.autor} (#{l.cantidadEjemplares} disp.)"/>
+                                </h:selectOneMenu>
+                                <span class="hint">Solo se muestran títulos con ejemplares en stock.</span>
+                                <h:message for="libro" styleClass="field-error"/>
+                            </div>
+                        </div>
+
+                        <h:panelGroup rendered="#{empty prestamoBean.librosDisponibles}">
+                            <div class="notice notice-warn" style="margin-top:16px;">
+                                <span>No hay ejemplares disponibles. Registra stock en el catálogo antes de continuar.</span>
+                            </div>
+                        </h:panelGroup>
+
+                        <div class="form-actions">
+                            <h:commandButton value="Registrar préstamo" action="#{prestamoBean.registrar}"
+                                             styleClass="btn btn-primary"
+                                             disabled="#{empty prestamoBean.librosDisponibles}"/>
+                            <a class="btn btn-secondary" href="#{request.contextPath}/app/prestamos.xhtml">Cancelar</a>
+                        </div>
+                    </h:form>
+                </div>
+            </section>
+
+            <aside class="panel">
+                <div class="panel-head">
+                    <h2 class="panel-title">Reglas del préstamo</h2>
+                </div>
+                <div class="panel-body">
+                    <ul class="rule-list">
+                        <li><span>Estudiante activo en LDAP</span><span class="pill pill-active">Obligatorio</span></li>
+                        <li><span>Máximo de préstamos activos</span><span class="pill pill-neutral">3 libros</span></li>
+                        <li><span>Plazo de devolución</span><span class="pill pill-neutral">14 días</span></li>
+                        <li><span>Stock del ejemplar</span><span class="pill pill-active">Mayor que 0</span></li>
+                    </ul>
+
+                    <div class="notice notice-info" style="margin-top:16px;">
+                        <span>Al registrar el préstamo, el stock del libro disminuye automáticamente. Al devolverlo,
+                              vuelve a estar disponible.</span>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </ui:define>
+</ui:composition>
+</html>

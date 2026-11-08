@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:ui="jakarta.faces.facelets">
+<ui:composition template="/templates/layout.xhtml">
+    <ui:define name="title">Usuarios</ui:define>
+    <ui:define name="crumb">Usuarios</ui:define>
+
+    <ui:define name="content">
+        <div class="page-head">
+            <div>
+                <h1>Usuarios de la biblioteca</h1>
+                <p class="page-sub">Estudiantes habilitados para solicitar préstamos. Los datos se sincronizan con LDAP.</p>
+            </div>
+            <div class="page-actions">
+                <a class="btn btn-primary" href="#{request.contextPath}/app/usuario-form.xhtml">Registrar usuario</a>
+            </div>
+        </div>
+
+        <section class="panel">
+            <div class="panel-head">
+                <h2 class="panel-title">Padrón de usuarios</h2>
+                <span class="panel-note">#{usuarioBean.usuarios.size()} registrados</span>
+            </div>
+
+            <div class="panel-body tight">
+                <h:panelGroup rendered="#{empty usuarioBean.usuarios}">
+                    <div class="panel-body">
+                        <div class="empty">
+                            <span class="empty-title">Aún no hay usuarios registrados</span>
+                            Los usuarios también se crean automáticamente al registrar su primer préstamo con LDAP.
+                        </div>
+                    </div>
+                </h:panelGroup>
+
+                <h:form rendered="#{not empty usuarioBean.usuarios}">
+                    <div class="table-wrap">
+                        <table class="data">
+                            <thead>
+                            <tr>
+                                <th>Estudiante</th>
+                                <th>Código UTU</th>
+                                <th class="hide-sm">Correo</th>
+                                <th class="actions-cell"><span class="sr-only">Acciones</span></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <ui:repeat value="#{usuarioBean.usuarios}" var="u">
+                                <tr>
+                                    <td>
+                                        <span class="cell-main">#{u.nombre}</span>
+                                        <span class="cell-sub">Usuario de biblioteca</span>
+                                    </td>
+                                    <td class="nowrap">#{u.codigoUtu}</td>
+                                    <td class="hide-sm">#{u.correo}</td>
+                                    <td class="actions-cell">
+                                        <div class="row-actions">
+                                            <a class="btn btn-sm btn-quiet"
+                                               href="#{request.contextPath}/app/usuario-form.xhtml?id=#{u.id}">Editar</a>
+                                            <h:commandButton value="Eliminar" styleClass="btn btn-sm btn-danger"
+                                                             action="#{usuarioBean.eliminar(u.id)}"
+                                                             onclick="return confirm('¿Eliminar este usuario? Solo es posible si no tiene préstamos.');"/>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </ui:repeat>
+                            </tbody>
+                        </table>
+                    </div>
+                </h:form>
+            </div>
+        </section>
+    </ui:define>
+</ui:composition>
+</html>

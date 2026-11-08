@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:ui="jakarta.faces.facelets">
+<ui:composition template="/templates/layout.xhtml">
+    <ui:define name="title">Mi cuenta</ui:define>
+    <ui:define name="crumb">Mi cuenta</ui:define>
+
+    <ui:define name="content">
+        <div class="page-head">
+            <div>
+                <h1>Mi cuenta · #{miCuentaBean.nombre}</h1>
+                <p class="page-sub">Código #{miCuentaBean.codigo} · consulta tus préstamos y tus fechas de devolución.</p>
+            </div>
+        </div>
+
+        <div class="kpi-strip three">
+            <div class="kpi">
+                <span class="kpi-label">Préstamos activos</span>
+                <span class="kpi-value">#{miCuentaBean.activos}</span>
+                <span class="kpi-note">libros sin devolver</span>
+            </div>
+            <div class="kpi">
+                <span class="kpi-label">Cupos disponibles</span>
+                <span class="kpi-value #{miCuentaBean.disponibles == 0 ? 'is-bad' : ''}">#{miCuentaBean.disponibles}</span>
+                <span class="kpi-note">de un máximo de 3</span>
+            </div>
+            <div class="kpi">
+                <span class="kpi-label">Estado de la cuenta</span>
+                <span class="kpi-value" style="font-size:19px; padding-top:4px;">Activa en LDAP</span>
+                <span class="kpi-note">autenticación centralizada</span>
+            </div>
+        </div>
+
+        <section class="panel">
+            <div class="panel-head">
+                <h2 class="panel-title">Mis préstamos</h2>
+                <span class="panel-note">#{miCuentaBean.prestamos.size()} registros</span>
+            </div>
+
+            <div class="panel-body tight">
+                <h:panelGroup rendered="#{empty miCuentaBean.prestamos}">
+                    <div class="panel-body">
+                        <div class="empty">
+                            <span class="empty-title">Aún no tienes préstamos</span>
+                            Acércate al módulo de biblioteca con tu código UTU para solicitar un libro.
+                        </div>
+                    </div>
+                </h:panelGroup>
+
+                <div class="table-wrap" rendered="#{not empty miCuentaBean.prestamos}">
+                    <table class="data">
+                        <thead>
+                        <tr>
+                            <th>Libro</th>
+                            <th class="nowrap">Prestado</th>
+                            <th class="nowrap">Devolver hasta</th>
+                            <th>Estado</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <ui:repeat value="#{miCuentaBean.prestamos}" var="p">
+                            <tr>
+                                <td>
+                                    <span class="cell-main">#{p.libro.titulo}</span>
+                                    <span class="cell-sub">#{p.libro.autor}</span>
+                                </td>
+                                <td class="nowrap">
+                                    <h:outputText value="#{p.fechaPrestamo}">
+                                        <f:convertDateTime type="localDate" pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </td>
+                                <td class="nowrap">
+                                    <h:outputText value="#{p.fechaDevolucionEstimada}">
+                                        <f:convertDateTime type="localDate" pattern="dd/MM/yyyy"/>
+                                    </h:outputText>
+                                </td>
+                                <td>
+                                    <span class="pill #{p.estado eq 'ACTIVO' ? (p.vencido ? 'pill-overdue' : 'pill-active') : 'pill-returned'}">
+                                        #{p.estado eq 'ACTIVO' ? (p.vencido ? 'Vencido' : 'Activo') : 'Devuelto'}
+                                    </span>
+                                </td>
+                            </tr>
+                        </ui:repeat>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <div class="notice notice-info" style="margin-top:16px;">
+            <span>Recuerda: puedes mantener hasta tres libros en préstamo al mismo tiempo. Si un título aparece
+                  vencido, acércate al módulo de biblioteca para regularizar la devolución.</span>
+        </div>
+    </ui:define>
+</ui:composition>
+</html>
