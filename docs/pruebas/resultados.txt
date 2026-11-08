@@ -1,0 +1,35 @@
+Biblioteca SENATI · Pruebas funcionales de extremo a extremo
+============================================================
+Fecha de ejecución : 8 de noviembre de 2026
+Navegador          : Chromium (Playwright, modo headless)
+Aplicación         : http://localhost:8080/biblioteca
+Base de datos      : db_biblioteca · datos de db/schema.sql y db/seed.sql
+Script             : docs/pruebas/test-flow.cjs
+
+Resultado: 25/25 pruebas correctas
+
+PASS · Sin sesión redirige al login · http://localhost:8080/biblioteca/login.xhtml
+PASS · Login del bibliotecario · http://localhost:8080/biblioteca/app/dashboard.xhtml
+PASS · Panel con indicadores
+PASS · Validador ISBN rechaza dígito verificador inválido · El ISBN 9780132350885 no es válido (dígito verificador incorrecto).
+PASS · Alta de libro con ISBN válido
+PASS · Edición de libro
+PASS · Eliminación de libro
+PASS · Alta de usuario
+PASS · Eliminación de usuario sin préstamos
+PASS · REST disponibilidad responde 200 · {"id":7,"titulo":"Sistemas de bases de datos","isbn":"9780133970777","ejemplaresDisponibles":2,"disponible":true}
+PASS · Registro de préstamo válido · Préstamo registrado con éxito. ID: 8
+PASS · El stock disminuye al prestar · 2 -> 1
+PASS · El préstamo aparece en el historial
+PASS · Validador de límite bloquea el cuarto préstamo · El estudiante ya tiene 3 préstamos activos sin devolver. Debe devolver un libro antes de solicitar otro.
+PASS · Devolución registrada · Devolución registrada correctamente.
+PASS · El stock se repone al devolver · 1 -> 2
+PASS · Reporte libros-mas-prestados.pdf · 200 · 1784 bytes
+PASS · Reporte morosidad.pdf · 200 · 1649 bytes
+PASS · REST catálogo · 10 libros
+PASS · REST búsqueda · 1 resultados
+PASS · REST mora · 1 registros
+PASS · Login LDAP del estudiante · http://localhost:8080/biblioteca/app/mi-cuenta.xhtml
+PASS · Mi cuenta lista sus préstamos
+PASS · Estudiante no accede a reportes · http://localhost:8080/biblioteca/app/mi-cuenta.xhtml
+PASS · LDAP rechaza estudiante inactivo · Credenciales inválidas o estudiante inactivo en el directorio institucional.

@@ -215,11 +215,23 @@ biblioteca-senati/
 
 ## Pruebas
 
+Pruebas unitarias del validador ISBN-10/ISBN-13:
+
 ```bash
 mvn test
 ```
 
-Incluye pruebas del validador de ISBN-10/ISBN-13.
+Pruebas funcionales de extremo a extremo (25 escenarios con Playwright sobre la aplicación
+desplegada y la base de datos de demostración):
+
+```bash
+npm install playwright
+npx playwright install chromium
+node docs/pruebas/test-flow.cjs
+```
+
+Los resultados de la última ejecución están en
+[docs/pruebas/resultados.txt](docs/pruebas/resultados.txt) (25/25 correctas).
 
 ## Autor
 
