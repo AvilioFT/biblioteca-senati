@@ -206,10 +206,9 @@ biblioteca-senati/
 
 ## Documentación
 
-- [Informe del trabajo final (Word)](docs/informe/PDSD-644_Biblioteca_SENATI.docx)
-- [Vista previa del informe (PDF)](docs/informe/PDSD-644_Biblioteca_SENATI.pdf)
 - [Capturas de pantalla](docs/capturas)
 - [Reportes PDF y evidencias de la API](docs/reportes)
+- [Pruebas funcionales y resultados](docs/pruebas)
 
 ![Panel del bibliotecario](docs/capturas/02-panel.png)
 
