@@ -204,6 +204,15 @@ biblioteca-senati/
 └── src/test/                   # pruebas JUnit
 ```
 
+## Documentación
+
+- [Informe del trabajo final (Word)](docs/informe/PDSD-644_Biblioteca_SENATI.docx)
+- [Vista previa del informe (PDF)](docs/informe/PDSD-644_Biblioteca_SENATI.pdf)
+- [Capturas de pantalla](docs/capturas)
+- [Reportes PDF y evidencias de la API](docs/reportes)
+
+![Panel del bibliotecario](docs/capturas/02-panel.png)
+
 ## Pruebas
 
 ```bash
